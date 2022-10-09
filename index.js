@@ -1,78 +1,44 @@
-const express = require('express');
-const app = express()
-// const morgan = require('morgan')
-var bodyParser = require("body-parser");
+const express = require('express'); // Import express framework into node project
+const dotenv = require('dotenv'); //  save enviroment variables
+const morgan = require('morgan'); // For database
+const bodyParser = require("body-parser"); // To parse request
+const path = require('path'); // Its inbuilt in node modules, no need to import separately
 
-// const UserRoute = require('./routes/user')
-// app.use(morgan('dev'))
+const app = express();
+
+//  Set port from environment variables
+dotenv.config({path: 'config.env'})
+const PORT = process.env.PORT || 8080
+
+// log request
+app.use(morgan('tiny'))
+
+
+//pass the request to body parser
 app.use(bodyParser.urlencoded({extended: true}))
-app.use(bodyParser.json())
 
-// Database connectivity
-const { default: mongoose } = require('mongoose');
-var moongose = require("mongoose");  // step #1 DB
-var dbURL = require("./properties").DB_URL; // db url
-moongose.connect(dbURL)
-moongose.connection.on("connected", ()=>{
-    console.log("Connected to mongo db using Mongose JS");
-})
-
-app.listen(4000);
-const path = require('path')
-
-app.get('/admin', (req,res) => {
-    res.sendFile(path.resolve(__dirname, 'admin.html'))
-    res.status(200)
-})
-app.get('/', (req,res) => {
-    res.sendFile(path.resolve(__dirname, 'index.html'))
-})
-app.get('/index1', (req,res) => {
-    res.sendFile(path.resolve(__dirname, 'index.html'))
-})
-app.get('/index2', (req,res) => {
-    res.sendFile(path.resolve(__dirname, 'index2.html'))
-})
-app.get('/index3', (req,res) => {
-    res.sendFile(path.resolve(__dirname, 'index3.html'))
-})
-
-app.get('/index', (req,res)=>{
-    res.sendFile(path.resolve(__dirname, 'index.html'))
-})
-
-app.get('/about', (req, res) => {
-    res.sendFile(path.resolve(__dirname, 'about.html'))
-})
-
-app.get('/contact',(req, res)=>{
-    res.sendFile(path.resolve(__dirname, 'contact.html'))
-})
-
-app.get('/post', (req,res)=>{
-    res.sendFile(path.resolve(__dirname, 'post.html'))
-})
-
-app.get('/users', (req,res)=>{
-    res.sendFile(path.resolve(__dirname, 'users.html'))
-})
-app.get('/sample_user', (req,res)=>{
-    res.sendFile(path.resolve(__dirname, 'sample_form.html'))
-})
-app.post('/sample_user', (req,res)=>{
-    //res.sendFile(path.resolve(__dirname, 'sample_form.html'))
-    const user =  User.create({
-        first_name: 'Tiger',
-        email: req.body.email,
-        password: req.body.password,
-      });
-      res.send(req.body);
-})
-
-app.get('/users.json', (req,res)=>{
-    res.json({"name": "Vidur Punj"})
-})
+// To set the view engine
+// ejs is the template engine we are using
+app.set("view engine", "ejs")
+// app.set("views", path.resolve(__dirname), "views/ejs") // if I have all my ejs file inside views/ejs
 
 
+// load assets
+app.use('/css', express.static(path.resolve(__dirname, "assets/css")))
+app.use('/img', express.static(path.resolve(__dirname, "assets/img")))
+app.use('/js', express.static(path.resolve(__dirname, "assets/js")))
 
-app.use(express.static('public'))
+app.get('/', (req,res)=>{
+    // res.send("CRUD Aaplication");
+    res.render('index')
+})
+app.get('/about',(req,res)  => {
+    res.render('about')
+})
+app.get('/contact',(req,res) => {
+    res.render('contact')
+})
+
+app.listen(PORT, ()=>{
+    console.log(`Server is runing at ${PORT}`)
+});
