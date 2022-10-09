@@ -1,10 +1,14 @@
 const express = require('express');
 const app = express()
+// const morgan = require('morgan')
 var bodyParser = require("body-parser");
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser());
 
+// const UserRoute = require('./routes/user')
+// app.use(morgan('dev'))
+app.use(bodyParser.urlencoded({extended: true}))
+app.use(bodyParser.json())
 
+// Database connectivity
 const { default: mongoose } = require('mongoose');
 var moongose = require("mongoose");  // step #1 DB
 var dbURL = require("./properties").DB_URL; // db url
@@ -13,7 +17,7 @@ moongose.connection.on("connected", ()=>{
     console.log("Connected to mongo db using Mongose JS");
 })
 
-app.listen(4000)
+app.listen(4000);
 const path = require('path')
 
 app.get('/admin', (req,res) => {
@@ -57,11 +61,12 @@ app.get('/sample_user', (req,res)=>{
 })
 app.post('/sample_user', (req,res)=>{
     //res.sendFile(path.resolve(__dirname, 'sample_form.html'))
-    console.log(req.number)
-    console.log(req.body)
-    console.log(req.params.body)
-    console.log(req.url)
-    res.send(req.body);
+    const user =  User.create({
+        first_name: 'Tiger',
+        email: req.body.email,
+        password: req.body.password,
+      });
+      res.send(req.body);
 })
 
 app.get('/users.json', (req,res)=>{
