@@ -1,3 +1,2 @@
-Additional maps are stored in the repository neveldo/mapael-maps
-
-Full link: https://github.com/neveldo/mapael-maps
+Tutorial:
+1. https://www.youtube.com/watch?v=W1Kttu53qTg
